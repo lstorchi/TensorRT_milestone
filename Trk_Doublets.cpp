@@ -10,6 +10,7 @@
 #include <cassert>
 #include <vector>
 #include <ctime>
+#include <array>
 
 #include "NvInfer.h"
 #include "NvUffParser.h"
@@ -52,10 +53,9 @@ int main(int argc, char ** argv)
     std::cout << "*** MAX WORKSPACE: " << MAX_WORKSPACE << "\n";
     std::cout << "*** MAX BATCHSIZE: " << maxBatchSize << std::endl;
 
-    int batchSize = 30000;
+    const int batchSize = 30000;
     std::cout << "*** Number of images to process (batchSize): " << batchSize << std::endl;
 
-    float ms;
     Logger gLogger; // object for warning and error reports
 
     // *** IMPORTING THE MODEL *** 
@@ -99,9 +99,6 @@ int main(int argc, char ** argv)
 
     // Start inference
     std::cout << "*** PERFORMING INFERENCE ***" << std::endl;
-
-    // Create the input and the output buffers on Host
-    output = std::array<float, batchSize * output_size>;
 
     // Open the file and the dataset
     H5File file( FILE_NAME, H5F_ACC_RDONLY );
@@ -152,7 +149,8 @@ int main(int argc, char ** argv)
     context->execute(batchSize, buffers);
 
     // Copy data to HtD
-    CHECK(cudaMemcpy(output, buffers[outputIndex], batchSize * output_size * sizeof(float), cudaMemcpyDeviceToHost));
+    float output[batchSize * output_size];
+    CHECK(cudaMemcpy((void *) output, buffers[outputIndex], batchSize * output_size * sizeof(float), cudaMemcpyDeviceToHost));
     
     const auto t_end = std::chrono::high_resolution_clock::now();
     const float ms = std::chrono::duration<float, std::milli>(t_end - t_start).count();
@@ -165,7 +163,8 @@ int main(int argc, char ** argv)
     context->destroy();
     mEngine->destroy();
 
-    for(i = 0; i <  batchSize; i++){
+    for(int i = 0; i <  batchSize; i++)
+    {
         std::cout << "Image n: " << i << "\n";
         std::cout << "y_pred = (" << output[2*i] << "," << output[2*i+1] << ")";
     }
