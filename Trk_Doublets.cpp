@@ -29,14 +29,14 @@ using namespace H5;
                             // for a multistream version -- just be sure that maxBatchSize < batchSize/n_contexts
 
 
-int main(){
-
+int main(int argc, char ** argv)
+{
     //define the data info
     const H5std_string FILE_NAME("pixel_only_data_test.h5");
     const H5std_string DATASET_NAME_DATA("data/block0_values");
     const H5std_string DATASET_NAME_LABELS("labels/block0_values");
 
-    const std::string dir{"./"} // directory where the .uff model is located
+    const std::string dir{"./"}; // directory where the .uff model is located
     const std::string uffFileName{dir + "pixel_only_final.uff"}; // name of the .pb trained model converted into .uff
 
     // Attributes of the model
@@ -48,7 +48,6 @@ int main(){
     const std::string inputTensorName = "hit_shape_input";
     const std::string outputTensorName = "output/Softmax";
 
-    std::cout << "*** MODEL TO IMPORT: " << fileName << "\n";
     std::cout << "*** DATASET FILE: " << FILE_NAME << "\n";
     std::cout << "*** MAX WORKSPACE: " << MAX_WORKSPACE << "\n";
     std::cout << "*** MAX BATCHSIZE: " << maxBatchSize << std::endl;
@@ -175,5 +174,4 @@ int main(){
 
     nvuffparser::shutdownProtobufLibrary();
     return 0;
-
 }
