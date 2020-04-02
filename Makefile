@@ -6,7 +6,7 @@ ROOTCUDA=/usr/local/cuda
 
 CXXFLAGS = -std=c++11 -I$(ROOTCUDA)/include \
 	   -I$(ROOTTRT)/include \
-	   -I$(ROOTTRT)/samples/common 
+	   -I$(ROOTTRT)/samples/common -O2
 
 LIB =  -L $(ROOTCUDA)/lib64/ -L $(ROOTTRT)/lib -Wl,--start-group -lnvinfer -lnvparsers -lnvinfer_plugin -lcudnn \
        -lcublas -lcudart_static -lnvToolsExt -lcudart -lrt -ldl -lpthread -Wl,--end-group -lhdf5_cpp -lhdf5

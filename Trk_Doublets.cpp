@@ -71,8 +71,11 @@ int main(int argc, char ** argv)
     assert(parser);
 
     // Declare the network inputs and outputs of the model to the parser
-    parser->registerInput(inputTensorName.c_str(), nvinfer1::Dims3(input_c, input_h, input_w), nvuffparser::UffInputOrder::kNCHW);
-    // in TRT 4.0 I was using DimsCHW instead of Dims3, but that one might be deprecated in TRT 6, so I used this one
+    parser->registerInput(inputTensorName.c_str(), 
+        nvinfer1::Dims3(input_c, input_h, input_w), 
+        nvuffparser::UffInputOrder::kNCHW);
+    // in TRT 4.0 I was using DimsCHW instead of Dims3, but that one 
+    // might be deprecated in TRT 6, so I used this one
     parser->registerOutput(outputTensorName.c_str());
     
     // Parse the imported model to populate the network
@@ -86,7 +89,8 @@ int main(int argc, char ** argv)
     //Build the engine using the builder object
     builder->setMaxBatchSize(maxBatchSize);
     builder->setMaxWorkspaceSize(MAX_WORKSPACE);
-    config->setFlag(BuilderFlag::kFP16); //16-bit kernels are permitted -- this is useful with GPUs that support full FP16 operations
+    config->setFlag(BuilderFlag::kFP16); //16-bit kernels are permitted -- 
+                                         // this is useful with GPUs that support full FP16 operations
     nvinfer1::ICudaEngine* mEngine(builder->buildEngineWithConfig(*network, *config));
     assert(mEngine);
     std::cout << "*** BUILDING DONE ***" << std::endl; 
